@@ -34,6 +34,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.openmrs.maven.plugins.model.Artifact.GROUP_DISTRO;
 import static org.openmrs.maven.plugins.utility.SDKConstants.PLATFORM_ARTIFACT_ID;
@@ -283,8 +284,13 @@ public class Setup extends AbstractServerTask {
 		if (distroProperties != null) {
 
 			if (removeProperty != null) {
-				distroProperties.removeProperty(removeProperty);
-			}
+				List<String> keysToRemove = distroProperties.getAllKeys().stream()
+						.filter(key -> key.startsWith(removeProperty))
+						.collect(Collectors.toList());
+                for (String s : keysToRemove) {
+                    distroProperties.removeProperty(s);
+                }
+            }
 
 			// This is saving or prompting for any property values within the distro properties with a "property." prefix
 			distroHelper.savePropertiesToServer(distroProperties, server);
