@@ -287,10 +287,10 @@ public class Setup extends AbstractServerTask {
 				List<String> keysToRemove = distroProperties.getAllKeys().stream()
 						.filter(key -> key.startsWith(removeProperty))
 						.collect(Collectors.toList());
-                for (String s : keysToRemove) {
-                    distroProperties.removeProperty(s);
-                }
-            }
+				for (String s : keysToRemove) {
+					distroProperties.removeProperty(s);
+				}
+			}
 
 			// This is saving or prompting for any property values within the distro properties with a "property." prefix
 			distroHelper.savePropertiesToServer(distroProperties, server);
