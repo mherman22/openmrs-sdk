@@ -119,6 +119,12 @@ public class Setup extends AbstractServerTask {
 	private String file;
 
 	/**
+	 * To remove a property from the distro.properties file
+	 */
+	@Parameter(property = "removeProperty")
+	private String removeProperty;
+
+	/**
 	 * Option to include demo data
 	 */
 	@Parameter(defaultValue = "false", property = "addDemoData")
@@ -275,6 +281,10 @@ public class Setup extends AbstractServerTask {
 	 */
 	public void setup(Server server, DistroProperties distroProperties) throws MojoExecutionException {
 		if (distroProperties != null) {
+
+			if (removeProperty != null) {
+				distroProperties.removeProperty(removeProperty);
+			}
 
 			// This is saving or prompting for any property values within the distro properties with a "property." prefix
 			distroHelper.savePropertiesToServer(distroProperties, server);
