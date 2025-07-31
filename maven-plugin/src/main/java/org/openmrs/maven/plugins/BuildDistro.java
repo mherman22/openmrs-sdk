@@ -245,6 +245,9 @@ public class BuildDistro extends AbstractTask {
 
 		DistroProperties distroProperties = distribution.getEffectiveProperties();
 
+		// Configure GitHub Packages if specified in distro properties
+		distroHelper.configureGitHubPackagesIfNeeded(distroProperties);
+
 		// First do content package validation
 		distroHelper.validateDistribution(distroProperties);
 

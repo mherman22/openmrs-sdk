@@ -280,6 +280,10 @@ public class Setup extends AbstractServerTask {
 			distroHelper.savePropertiesToServer(distroProperties, server);
 
 			setServerVersionsFromDistroProperties(server, distroProperties);
+			
+			// Configure GitHub Packages if specified in distro properties
+			distroHelper.configureGitHubPackagesIfNeeded(distroProperties);
+			
 			distroHelper.validateDistribution(distroProperties);
 			moduleInstaller.installModulesForDistro(server, distroProperties);
 

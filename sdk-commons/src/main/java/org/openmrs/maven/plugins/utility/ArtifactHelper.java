@@ -1,7 +1,9 @@
 package org.openmrs.maven.plugins.utility;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.settings.Settings;
 import org.openmrs.maven.plugins.model.Artifact;
+import org.openmrs.maven.plugins.model.GitHubPackagesConfig;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
 
 import java.io.File;
@@ -63,6 +65,19 @@ public class ArtifactHelper {
 							mavenEnvironment.getPluginManager()
 					)
 			);
+		}
+	}
+	
+	/**
+	 * Configures GitHub Packages repository in Maven settings before downloading artifacts
+	 * @param config GitHub Packages configuration
+	 * @throws MojoExecutionException if configuration fails
+	 */
+	public void configureGitHubPackages(GitHubPackagesConfig config) throws MojoExecutionException {
+		if (config != null && config.isValid()) {
+			Settings settings = mavenEnvironment.getSettings();
+			GitHubPackagesManager manager = new GitHubPackagesManager(settings);
+			manager.configureGitHubPackages(config);
 		}
 	}
 }

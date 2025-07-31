@@ -5,6 +5,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.openmrs.maven.plugins.model.Artifact;
+import org.openmrs.maven.plugins.model.GitHubPackagesConfig;
+import org.openmrs.maven.plugins.utility.ArtifactHelper;
 import org.openmrs.maven.plugins.utility.SDKConstants;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
 
@@ -67,6 +69,24 @@ public class Fetch extends AbstractTask {
 	 */
 	@Parameter(property = "dir")
 	private String dir;
+	
+	/**
+	 * GitHub Packages repository URL
+	 */
+	@Parameter(property = "github.packages.url")
+	private String githubPackagesUrl;
+	
+	/**
+	 * GitHub Packages username
+	 */
+	@Parameter(property = "github.packages.username")
+	private String githubPackagesUsername;
+	
+	/**
+	 * GitHub Packages token
+	 */
+	@Parameter(property = "github.packages.token")
+	private String githubPackagesToken;
 
 	private String projectName;
 
@@ -82,6 +102,10 @@ public class Fetch extends AbstractTask {
 		if (StringUtils.isBlank(groupId)) {
 			groupId = DEFAULT_GROUP_ID;
 		}
+		
+		// Configure GitHub Packages if parameters are provided
+		configureGitHubPackagesIfProvided();
+		
 		getData();
 		switch (projectType) {
 			case MODULE:
@@ -218,5 +242,20 @@ public class Fetch extends AbstractTask {
 				),
 				executionEnvironment(mavenProject, mavenSession, pluginManager)
 		);
+	}
+	
+	/**
+	 * Configures GitHub Packages if parameters are provided
+	 * @throws MojoExecutionException if configuration fails
+	 */
+	private void configureGitHubPackagesIfProvided() throws MojoExecutionException {
+		if (StringUtils.isNotBlank(githubPackagesUrl) && 
+			StringUtils.isNotBlank(githubPackagesUsername) && 
+			StringUtils.isNotBlank(githubPackagesToken)) {
+			
+			GitHubPackagesConfig config = new GitHubPackagesConfig(githubPackagesUrl, githubPackagesUsername, githubPackagesToken);
+			ArtifactHelper artifactHelper = new ArtifactHelper(getMavenEnvironment());
+			artifactHelper.configureGitHubPackages(config);
+		}
 	}
 }

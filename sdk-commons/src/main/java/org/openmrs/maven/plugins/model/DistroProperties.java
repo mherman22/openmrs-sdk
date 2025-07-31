@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.openmrs.maven.plugins.utility.DistroHelper;
 import org.openmrs.maven.plugins.utility.PropertiesUtils;
+import org.openmrs.maven.plugins.model.GitHubPackagesConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,11 @@ public class DistroProperties extends BaseSdkProperties {
     private static final String DB_SQL = "db.sql";
     public static final String PROPERTY_DEFAULT_VALUE_KEY = "property.%s.default";
     public static final String PROPERTY_KEY = "property.%s";
+    
+    // GitHub Packages configuration properties
+    public static final String GITHUB_PACKAGES_URL = "github.packages.url";
+    public static final String GITHUB_PACKAGES_USERNAME = "github.packages.username";
+    public static final String GITHUB_PACKAGES_TOKEN = "github.packages.token";
 
     public DistroProperties(String name, String platformVersion){
         properties = new Properties();
@@ -175,5 +181,41 @@ public class DistroProperties extends BaseSdkProperties {
         }
 
         properties.setProperty("exclusions", exclusions + "," + exclusion);
+    }
+    
+    /**
+     * Gets GitHub Packages configuration from properties
+     * @return GitHubPackagesConfig or null if not configured
+     */
+    public GitHubPackagesConfig getGitHubPackagesConfig() {
+        String url = getParam(GITHUB_PACKAGES_URL);
+        String username = getParam(GITHUB_PACKAGES_USERNAME);
+        String token = getParam(GITHUB_PACKAGES_TOKEN);
+        
+        if (url != null && username != null && token != null) {
+            return new GitHubPackagesConfig(url, username, token);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Sets GitHub Packages configuration
+     * @param config GitHub Packages configuration
+     */
+    public void setGitHubPackagesConfig(GitHubPackagesConfig config) {
+        if (config != null) {
+            properties.setProperty(GITHUB_PACKAGES_URL, config.getRepositoryUrl());
+            properties.setProperty(GITHUB_PACKAGES_USERNAME, config.getUsername());
+            properties.setProperty(GITHUB_PACKAGES_TOKEN, config.getToken());
+        }
+    }
+    
+    /**
+     * Checks if GitHub Packages is configured
+     * @return true if GitHub Packages configuration exists
+     */
+    public boolean hasGitHubPackagesConfig() {
+        return getGitHubPackagesConfig() != null;
     }
 }

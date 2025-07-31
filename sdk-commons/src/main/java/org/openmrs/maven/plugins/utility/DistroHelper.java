@@ -13,6 +13,7 @@ import org.openmrs.maven.plugins.model.ContentPackage;
 import org.openmrs.maven.plugins.model.ContentProperties;
 import org.openmrs.maven.plugins.model.Distribution;
 import org.openmrs.maven.plugins.model.DistroProperties;
+import org.openmrs.maven.plugins.model.GitHubPackagesConfig;
 import org.openmrs.maven.plugins.model.Server;
 import org.openmrs.maven.plugins.model.Version;
 import org.semver4j.Range;
@@ -450,5 +451,17 @@ public class DistroHelper {
 			}
 			return true;
 		});
+	}
+	
+	/**
+	 * Configures GitHub Packages repository if specified in distro properties
+	 * @param distroProperties the distro properties to check for GitHub Packages configuration
+	 * @throws MojoExecutionException if configuration fails
+	 */
+	public void configureGitHubPackagesIfNeeded(DistroProperties distroProperties) throws MojoExecutionException {
+		if (distroProperties != null && distroProperties.hasGitHubPackagesConfig()) {
+			GitHubPackagesConfig config = distroProperties.getGitHubPackagesConfig();
+			artifactHelper.configureGitHubPackages(config);
+		}
 	}
 }
